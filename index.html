@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tribal AI Governance Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --earth: #2C1A0E;
+    --clay: #8B4513;
+    --ochre: #C8860A;
+    --gold: #E8B84B;
+    --sage: #5C7A5C;
+    --sky: #4A7FA5;
+    --cream: #F5EDD8;
+    --sand: #DDD0B3;
+    --smoke: #1A1208;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--smoke);
+    color: var(--cream);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Woven texture background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(200,134,10,0.03) 3px, rgba(200,134,10,0.03) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(200,134,10,0.03) 3px, rgba(200,134,10,0.03) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid rgba(200,134,10,0.3);
+    position: relative;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,134,10,0.12);
+    border: 1px solid rgba(200,134,10,0.35);
+    border-radius: 2px;
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 68px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .header-sub {
+    font-size: 17px;
+    color: var(--sand);
+    font-weight: 300;
+    max-width: 580px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .header-decoration {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 180px;
+    height: 180px;
+    opacity: 0.08;
+  }
+
+  /* Nav pills */
+  .nav-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(200,134,10,0.15);
+  }
+
+  .pill {
+    padding: 8px 18px;
+    border-radius: 2px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid rgba(200,134,10,0.25);
+    background: transparent;
+    color: var(--sand);
+    transition: all 0.2s;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .pill.active, .pill:hover {
+    background: var(--ochre);
+    border-color: var(--ochre);
+    color: var(--smoke);
+    font-weight: 600;
+  }
+
+  /* Main Grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    padding: 40px 0;
+    align-items: start;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: sticky;
+    top: 24px;
+  }
+
+  .sidebar-section {
+    margin-bottom: 32px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(200,134,10,0.2);
+  }
+
+  .domain-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .domain-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: var(--sand);
+    text-align: left;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .domain-btn:hover, .domain-btn.active {
+    background: rgba(200,134,10,0.12);
+    color: var(--gold);
+  }
+
+  .domain-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .score-ring {
+    margin-top: 16px;
+    background: rgba(200,134,10,0.06);
+    border: 1px solid rgba(200,134,10,0.2);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .ring-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 12px;
+  }
+
+  .ring-svg { display: block; margin: 0 auto 8px; }
+
+  .ring-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .ring-note {
+    font-size: 11px;
+    color: var(--sand);
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  /* Content panel */
+  .content-panel {
+    min-height: 500px;
+  }
+
+  .domain-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .domain-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(200,134,10,0.2);
+  }
+
+  .panel-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+
+  .panel-desc {
+    font-size: 15px;
+    color: var(--sand);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* Assessment questions */
+  .questions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .question-card {
+    background: rgba(245,237,216,0.04);
+    border: 1px solid rgba(200,134,10,0.15);
+    border-radius: 4px;
+    padding: 20px 24px;
+    transition: border-color 0.2s;
+  }
+
+  .question-card:hover {
+    border-color: rgba(200,134,10,0.35);
+  }
+
+  .question-text {
+    font-size: 15px;
+    color: var(--cream);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .question-number {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 6px;
+  }
+
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .rating-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--sand);
+    opacity: 0.6;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .rating-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .rb {
+    width: 36px;
+    height: 36px;
+    border-radius: 3px;
+    border: 1px solid rgba(200,134,10,0.25);
+    background: transparent;
+    color: var(--sand);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .rb:hover { border-color: var(--ochre); color: var(--gold); }
+  .rb.selected { background: var(--ochre); border-color: var(--ochre); color: var(--smoke); }
+
+  .rating-wrap { flex: 1; }
+
+  /* Recommendations */
+  .recs-section {
+    margin-top: 8px;
+  }
+
+  .recs-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .recs-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(200,134,10,0.2);
+  }
+
+  .rec-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(200,134,10,0.08);
+  }
+
+  .rec-item:last-child { border-bottom: none; }
+
+  .rec-priority {
+    width: 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    align-self: stretch;
+    min-height: 40px;
+  }
+
+  .priority-high { background: #C0392B; }
+  .priority-med { background: var(--ochre); }
+  .priority-low { background: var(--sage); }
+
+  .rec-body {}
+
+  .rec-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+
+  .rec-detail {
+    font-size: 13px;
+    color: var(--sand);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+
+  .rec-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+
+  .tag-action { background: rgba(200,134,10,0.15); color: var(--gold); }
+  .tag-policy { background: rgba(92,122,92,0.2); color: #8FBF8F; }
+  .tag-partner { background: rgba(74,127,165,0.2); color: #8EC4E8; }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 4px;
+    background: rgba(200,134,10,0.15);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--clay), var(--gold));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Report section */
+  #report-panel {
+    padding: 32px 0;
+  }
+
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .report-card {
+    background: rgba(245,237,216,0.04);
+    border: 1px solid rgba(200,134,10,0.15);
+    border-radius: 4px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .report-card-icon { font-size: 24px; margin-bottom: 8px; }
+  .report-card-name { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--sand); opacity: 0.7; margin-bottom: 8px; }
+  .report-card-score { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); font-weight: 700; }
+
+  .score-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+    background: rgba(200,134,10,0.1);
+  }
+
+  .score-fill-high { background: var(--sage); }
+  .score-fill-med { background: var(--ochre); }
+  .score-fill-low { background: #C0392B; }
+
+  .readiness-band {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    border-radius: 4px;
+    margin-bottom: 32px;
+    border: 1px solid;
+  }
+
+  .band-emerging { background: rgba(192,57,43,0.08); border-color: rgba(192,57,43,0.25); }
+  .band-developing { background: rgba(200,134,10,0.08); border-color: rgba(200,134,10,0.25); }
+  .band-ready { background: rgba(92,122,92,0.1); border-color: rgba(92,122,92,0.3); }
+
+  .band-icon { font-size: 36px; }
+  .band-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--cream); margin-bottom: 4px; }
+  .band-desc { font-size: 14px; color: var(--sand); line-height: 1.5; }
+
+  .next-steps {
+    background: rgba(200,134,10,0.06);
+    border: 1px solid rgba(200,134,10,0.2);
+    border-radius: 4px;
+    padding: 24px;
+  }
+
+  .next-steps h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ochre);
+    color: var(--smoke);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text { font-size: 14px; color: var(--sand); line-height: 1.5; }
+  .step-text strong { color: var(--cream); }
+
+  footer {
+    border-top: 1px solid rgba(200,134,10,0.15);
+    padding: 24px 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--sand);
+    opacity: 0.5;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 768px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .report-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-badge">⬡ Sovereign Nations Initiative</div>
+    <h1>Tribal AI<br><em>Governance Framework</em></h1>
+    <p class="header-sub">A community-centered readiness assessment for nations navigating artificial intelligence — on their own terms, at their own pace.</p>
+    <svg class="header-decoration" viewBox="0 0 180 180" fill="none">
+      <polygon points="90,10 170,50 170,130 90,170 10,130 10,50" stroke="#C8860A" stroke-width="1.5" fill="none"/>
+      <polygon points="90,30 150,60 150,120 90,150 30,120 30,60" stroke="#C8860A" stroke-width="1" fill="none"/>
+      <polygon points="90,55 130,75 130,105 90,125 50,105 50,75" stroke="#C8860A" stroke-width="0.8" fill="none"/>
+      <circle cx="90" cy="90" r="8" stroke="#C8860A" stroke-width="1.2" fill="none"/>
+    </svg>
+  </header>
+
+  <div class="nav-pills">
+    <button class="pill active" onclick="showSection('assess')">Assessment</button>
+    <button class="pill" onclick="showSection('report')">Summary Report</button>
+  </div>
+
+  <div id="assess-section">
+    <div class="main-grid">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Five Domains</div>
+          <div class="domain-nav">
+            <button class="domain-btn active" onclick="showDomain('data')">
+              <div class="domain-icon" style="background:rgba(200,134,10,0.12)">🏺</div>
+              Data Governance
+            </button>
+            <button class="domain-btn" onclick="showDomain('sovereignty')">
+              <div class="domain-icon" style="background:rgba(92,122,92,0.12)">🦅</div>
+              Sovereignty
+            </button>
+            <button class="domain-btn" onclick="showDomain('vendor')">
+              <div class="domain-icon" style="background:rgba(74,127,165,0.12)">⚖️</div>
+              Vendor Risk
+            </button>
+            <button class="domain-btn" onclick="showDomain('community')">
+              <div class="domain-icon" style="background:rgba(139,69,19,0.2)">🌱</div>
+              Community Impact
+            </button>
+            <button class="domain-btn" onclick="showDomain('workforce')">
+              <div class="domain-icon" style="background:rgba(120,80,180,0.12)">📚</div>
+              Workforce
+            </button>
+          </div>
+        </div>
+
+        <div class="score-ring">
+          <div class="ring-label">Overall Readiness</div>
+          <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(200,134,10,0.15)" stroke-width="8"/>
+            <circle id="main-ring" cx="50" cy="50" r="38" fill="none" stroke="#C8860A" stroke-width="8"
+              stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"
+              transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.8s ease"/>
+          </svg>
+          <div class="ring-score" id="main-score">—</div>
+          <div class="ring-note">Complete questions to score</div>
+        </div>
+      </aside>
+
+      <main class="content-panel">
+
+        <!-- DATA GOVERNANCE -->
+        <div class="domain-panel active" id="domain-data">
+          <div class="panel-header">
+            <div class="panel-icon" style="background:rgba(200,134,10,0.12)">🏺</div>
+            <div>
+              <div class="panel-title">Data Governance Readiness</div>
+              <p class="panel-desc">How well does the nation control, classify, and protect its data — and is that data infrastructure ready to feed AI systems responsibly?</p>
+            </div>
+          </div>
+          <div class="questions-grid" id="q-data"></div>
+          <div class="recs-section">
+            <div class="recs-label">Guidance</div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Establish a Tribal Data Sovereignty Policy</div>
+                <div class="rec-detail">Define what data belongs to the nation, who can access it, and under what conditions. Reference the OCAP® principles (Ownership, Control, Access, Possession) developed by First Nations. This must precede any AI vendor engagement.</div>
+                <span class="rec-tag tag-policy">Policy First</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Audit & Classify Your Data Assets</div>
+                <div class="rec-detail">Inventory data held in tribal systems, federal agencies (BIA, IHS), and third-party vendors. Classify by sensitivity: sacred/ceremonial, personally identifiable, administrative, and public. AI can only be governed if you know what you have.</div>
+                <span class="rec-tag tag-action">Action Item</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-low"></div>
+              <div class="rec-body">
+                <div class="rec-title">Data Repatriation Planning</div>
+                <div class="rec-detail">Work to reclaim tribal data currently held by federal or state agencies. The Indigenous Data Sovereignty principles support nations asserting rights over data collected from their communities. Partner with NCAI or Native Nations Institute for templates.</div>
+                <span class="rec-tag tag-partner">Partnership</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOVEREIGNTY -->
+        <div class="domain-panel" id="domain-sovereignty">
+          <div class="panel-header">
+            <div class="panel-icon" style="background:rgba(92,122,92,0.12)">🦅</div>
+            <div>
+              <div class="panel-title">Sovereignty Considerations</div>
+              <p class="panel-desc">Does the AI strategy reinforce or undermine inherent tribal sovereignty? Legal, cultural, and jurisdictional dimensions must be evaluated together.</p>
+            </div>
+          </div>
+          <div class="questions-grid" id="q-sovereignty"></div>
+          <div class="recs-section">
+            <div class="recs-label">Guidance</div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Maintain Jurisdictional Authority Over AI Decisions</div>
+                <div class="rec-detail">Any AI system that makes or informs decisions affecting tribal members, land, or resources must remain subject to tribal law — not the vendor's terms of service. Include explicit jurisdiction clauses in all contracts.</div>
+                <span class="rec-tag tag-policy">Sovereignty</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Require FPIC 2.0 Before Deployment</div>
+                <div class="rec-detail">Free, Prior, and Informed Consent should extend to AI systems that affect community members. Engage elders, language speakers, and youth councils — not just elected officials — before any AI is deployed in health, education, or social services.</div>
+                <span class="rec-tag tag-action">Community Process</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Prohibit Use of Cultural & Language Data as Training Data</div>
+                <div class="rec-detail">Oral histories, language recordings, and ceremonial knowledge must be explicitly excluded from AI training datasets. Vendors must sign binding agreements with audit rights to verify compliance.</div>
+                <span class="rec-tag tag-policy">Cultural Protection</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VENDOR RISK -->
+        <div class="domain-panel" id="domain-vendor">
+          <div class="panel-header">
+            <div class="panel-icon" style="background:rgba(74,127,165,0.12)">⚖️</div>
+            <div>
+              <div class="panel-title">Vendor Risk Assessment</div>
+              <p class="panel-desc">AI vendors bring capabilities but also risks. Nations must evaluate every provider through a lens of trust, leverage, and long-term alignment.</p>
+            </div>
+          </div>
+          <div class="questions-grid" id="q-vendor"></div>
+          <div class="recs-section">
+            <div class="recs-label">Guidance</div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Use a Tribal AI Procurement Checklist</div>
+                <div class="rec-detail">Before any contract, require vendors to answer: (1) Who owns the data we input? (2) Will our data train your models? (3) Where is data stored — and can it be subpoenaed? (4) What happens to our data if your company is acquired or shut down?</div>
+                <span class="rec-tag tag-action">Procurement</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Avoid Vendor Lock-In by Design</div>
+                <div class="rec-detail">Require data portability and open export formats in every contract. Prefer vendors who support interoperability standards. Pilot before committing — especially for systems touching enrollment, health records, or child welfare.</div>
+                <span class="rec-tag tag-action">Contracting</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Tier Vendors by Sensitivity Level</div>
+                <div class="rec-detail">Not all vendors need the same scrutiny. Use a 3-tier model: Tier 1 (touches member PII or cultural data) = full legal review + council approval. Tier 2 (internal admin/operations) = IT review. Tier 3 (general productivity tools) = staff review.</div>
+                <span class="rec-tag tag-policy">Risk Tiers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMMUNITY IMPACT -->
+        <div class="domain-panel" id="domain-community">
+          <div class="panel-header">
+            <div class="panel-icon" style="background:rgba(139,69,19,0.2)">🌱</div>
+            <div>
+              <div class="panel-title">Community Impact</div>
+              <p class="panel-desc">AI should strengthen — not fracture — community relationships, cultural continuity, and the social fabric of tribal life.</p>
+            </div>
+          </div>
+          <div class="questions-grid" id="q-community"></div>
+          <div class="recs-section">
+            <div class="recs-label">Guidance</div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Community Benefit Test Before Deployment</div>
+                <div class="rec-detail">For every proposed AI use case, ask: Who benefits most? Who bears the most risk? Does this reflect community values? Could this displace community roles that carry cultural significance? Document answers before proceeding.</div>
+                <span class="rec-tag tag-action">Values Alignment</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Establish a Community AI Advisory Circle</div>
+                <div class="rec-detail">Create a standing body — including elders, youth, program staff, and council members — to review and advise on AI initiatives. This isn't just due diligence; it's governance. Meet quarterly at minimum.</div>
+                <span class="rec-tag tag-partner">Governance Body</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-low"></div>
+              <div class="rec-body">
+                <div class="rec-title">Identify High-Value, Low-Risk Starting Points</div>
+                <div class="rec-detail">Good first uses: grant writing assistance, meeting transcription, document drafting, language learning apps (if language data is tribally controlled), and internal administrative tools. Avoid: member-facing decision systems, child welfare, law enforcement.</div>
+                <span class="rec-tag tag-action">Use Case Selection</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKFORCE -->
+        <div class="domain-panel" id="domain-workforce">
+          <div class="panel-header">
+            <div class="panel-icon" style="background:rgba(120,80,180,0.12)">📚</div>
+            <div>
+              <div class="panel-title">Workforce Upskilling</div>
+              <p class="panel-desc">Sustainable AI adoption requires building internal capacity — so the nation remains the expert in the room, not a dependent of outside vendors.</p>
+            </div>
+          </div>
+          <div class="questions-grid" id="q-workforce"></div>
+          <div class="recs-section">
+            <div class="recs-label">Guidance</div>
+            <div class="rec-item">
+              <div class="rec-priority priority-high"></div>
+              <div class="rec-body">
+                <div class="rec-title">Identify an Internal AI Champion</div>
+                <div class="rec-detail">Designate a staff member (IT director, data manager, or trained generalist) as the tribal AI lead. Fund their ongoing professional development. This person becomes the institutional memory and accountability anchor for AI initiatives.</div>
+                <span class="rec-tag tag-action">Capacity Building</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">All-Staff AI Literacy (Not Just IT)</div>
+                <div class="rec-detail">Program managers, health aides, educators, and council staff will all encounter AI. Provide a 2-hour foundational training: what AI is, what it isn't, how to spot AI-generated content, and how to report concerns. Use free resources from AI4K12 and MIT OpenCourseWare.</div>
+                <span class="rec-tag tag-action">Training</span>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div class="rec-priority priority-med"></div>
+              <div class="rec-body">
+                <div class="rec-title">Tribal College & Youth Pipeline</div>
+                <div class="rec-detail">Partner with Tribal Colleges and Universities (TCUs) to develop AI curriculum that centers Indigenous values. Invest in youth tech pathways — the next generation of data stewards should come from within the community, not from Silicon Valley.</div>
+                <span class="rec-tag tag-partner">Long-Term Investment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div><!-- end assess-section -->
+
+  <!-- REPORT PANEL -->
+  <div id="report-section" style="display:none;">
+    <div id="report-panel">
+      <div id="readiness-band" class="readiness-band band-emerging">
+        <div class="band-icon" id="band-icon">🌱</div>
+        <div>
+          <div class="band-title" id="band-title">Complete the assessment to see your readiness</div>
+          <div class="band-desc" id="band-desc">Score all five domains to generate your tribal AI readiness profile and prioritized action plan.</div>
+        </div>
+      </div>
+
+      <div class="report-grid">
+        <div class="report-card">
+          <div class="report-card-icon">🏺</div>
+          <div class="report-card-name">Data</div>
+          <div class="report-card-score" id="r-data">—</div>
+          <div class="score-bar"><div id="bar-data" class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="report-card">
+          <div class="report-card-icon">🦅</div>
+          <div class="report-card-name">Sovereignty</div>
+          <div class="report-card-score" id="r-sovereignty">—</div>
+          <div class="score-bar"><div id="bar-sovereignty" class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="report-card">
+          <div class="report-card-icon">⚖️</div>
+          <div class="report-card-name">Vendor</div>
+          <div class="report-card-score" id="r-vendor">—</div>
+          <div class="score-bar"><div id="bar-vendor" class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="report-card">
+          <div class="report-card-icon">🌱</div>
+          <div class="report-card-name">Community</div>
+          <div class="report-card-score" id="r-community">—</div>
+          <div class="score-bar"><div id="bar-community" class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="report-card">
+          <div class="report-card-icon">📚</div>
+          <div class="report-card-name">Workforce</div>
+          <div class="report-card-score" id="r-workforce">—</div>
+          <div class="score-bar"><div id="bar-workforce" class="progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="next-steps">
+        <h3>Prioritized Next Steps</h3>
+        <div id="next-steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-text">Complete all five domain assessments to generate your personalized action plan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Tribal AI Governance Framework · Built on principles of Indigenous Data Sovereignty · For sovereign nations, by design
+  </footer>
+</div>
+
+<script>
+const questions = {
+  data: [
+    { text: "Does your nation have a written data governance or data sovereignty policy?" },
+    { text: "Do you maintain an inventory of what data you hold, where it lives, and who can access it?" },
+    { text: "Are tribal members informed about how their data is collected and used?" },
+    { text: "Do you have processes for handling data breaches involving tribal member information?" }
+  ],
+  sovereignty: [
+    { text: "Do AI vendor contracts include explicit language preserving tribal jurisdiction over decisions?" },
+    { text: "Are cultural, ceremonial, and language data explicitly protected from vendor use?" },
+    { text: "Does your community have a formal process for consent on new technology deployments?" },
+    { text: "Is the Tribal Council aware of and engaged with current AI initiatives?" }
+  ],
+  vendor: [
+    { text: "Do you have a procurement checklist specifically for AI and data-intensive vendors?" },
+    { text: "Have you reviewed vendor terms of service for data training and ownership clauses?" },
+    { text: "Can you export your data out of current systems in open formats without vendor assistance?" },
+    { text: "Are AI vendors vetted for their handling of Indigenous and minority community data?" }
+  ],
+  community: [
+    { text: "Have community members (beyond staff) been consulted on AI use cases?" },
+    { text: "Does your nation have clarity on which decisions should never be delegated to AI?" },
+    { text: "Are there feedback channels for community members to flag AI-related concerns?" },
+    { text: "Do current AI use cases strengthen (vs. replace) roles that carry community meaning?" }
+  ],
+  workforce: [
+    { text: "Does at least one staff member have dedicated responsibility for AI/data governance?" },
+    { text: "Have staff received any training on AI tools they currently use?" },
+    { text: "Does leadership understand AI well enough to ask vendors hard questions?" },
+    { text: "Is there a plan to develop internal AI capacity rather than rely indefinitely on outside vendors?" }
+  ]
+};
+
+const scores = { data: null, sovereignty: null, vendor: null, community: null, workforce: null };
+
+function buildQuestions(domain) {
+  const container = document.getElementById('q-' + domain);
+  container.innerHTML = '';
+  questions[domain].forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+      <div class="question-number">Question ${i+1} of ${questions[domain].length}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="rating-wrap">
+        <div class="rating-row">
+          <div class="rating-btns" id="rb-${domain}-${i}">
+            ${[1,2,3,4,5].map(v => `<button class="rb" onclick="rate('${domain}',${i},${v},this)">${v}</button>`).join('')}
+          </div>
+        </div>
+        <div class="rating-labels">
+          <span>Not in place</span><span>Fully in place</span>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+const domainScores = { data:{}, sovereignty:{}, vendor:{}, community:{}, workforce:{} };
+
+function rate(domain, qi, val, btn) {
+  document.querySelectorAll(`#rb-${domain}-${qi} .rb`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  domainScores[domain][qi] = val;
+  updateScore(domain);
+}
+
+function updateScore(domain) {
+  const vals = Object.values(domainScores[domain]);
+  if (vals.length === 0) return;
+  const avg = vals.reduce((a,b)=>a+b,0) / questions[domain].length;
+  scores[domain] = Math.round(avg * 20); // 1-5 -> 0-100
+  updateOverall();
+  updateReport(domain);
+}
+
+function updateOverall() {
+  const valid = Object.values(scores).filter(s => s !== null);
+  if (!valid.length) return;
+  const avg = Math.round(valid.reduce((a,b)=>a+b,0) / valid.length);
+  document.getElementById('main-score').textContent = avg + '%';
+  const dash = 239;
+  const offset = dash - (dash * avg / 100);
+  document.getElementById('main-ring').style.strokeDashoffset = offset;
+
+  const color = avg >= 70 ? '#5C7A5C' : avg >= 40 ? '#C8860A' : '#C0392B';
+  document.getElementById('main-ring').style.stroke = color;
+}
+
+function updateReport(domain) {
+  const s = scores[domain];
+  if (s === null) return;
+  document.getElementById('r-' + domain).textContent = s + '%';
+  const bar = document.getElementById('bar-' + domain);
+  bar.style.width = s + '%';
+  bar.className = 'progress-fill ' + (s >= 70 ? 'score-fill-high' : s >= 40 ? 'score-fill-med' : 'score-fill-low');
+  refreshBand();
+}
+
+function refreshBand() {
+  const valid = Object.values(scores).filter(s=>s!==null);
+  if (!valid.length) return;
+  const avg = Math.round(valid.reduce((a,b)=>a+b,0)/valid.length);
+  const band = document.getElementById('readiness-band');
+  const title = document.getElementById('band-title');
+  const desc = document.getElementById('band-desc');
+  const icon = document.getElementById('band-icon');
+  band.className = 'readiness-band ' + (avg>=70 ? 'band-ready' : avg>=40 ? 'band-developing' : 'band-emerging');
+  if (avg >= 70) {
+    icon.textContent = '🦅';
+    title.textContent = 'AI Ready — Proceed with Governance';
+    desc.textContent = 'Your nation has strong foundations. Move toward piloting AI in low-risk areas with structured oversight, community review processes, and clear accountability.';
+  } else if (avg >= 40) {
+    icon.textContent = '⬡';
+    title.textContent = 'Developing — Strengthen Foundations First';
+    desc.textContent = 'Meaningful progress is underway, but gaps remain. Prioritize data governance and sovereignty protections before expanding AI use. Build internal capacity in parallel.';
+  } else {
+    icon.textContent = '🌱';
+    title.textContent = 'Emerging — Begin With Policy, Not Tools';
+    desc.textContent = 'Your nation is in early stages. Start with foundational work: a data sovereignty policy, staff literacy, and community engagement. AI tools can wait — governance cannot.';
+  }
+
+  // Build next steps based on lowest scoring domains
+  const ranked = Object.entries(scores)
+    .filter(([,v])=>v!==null)
+    .sort(([,a],[,b])=>a-b);
+
+  const stepMap = {
+    data: '<strong>Data Governance:</strong> Adopt a Tribal Data Sovereignty Policy referencing OCAP® principles before any AI contracting.',
+    sovereignty: '<strong>Sovereignty:</strong> Require FPIC processes and jurisdictional clauses in all vendor contracts.',
+    vendor: '<strong>Vendor Risk:</strong> Develop a 10-question AI procurement checklist and apply it to all active vendors.',
+    community: '<strong>Community Impact:</strong> Convene a Community AI Advisory Circle with elders, youth, and program staff.',
+    workforce: '<strong>Workforce:</strong> Designate an internal AI champion and fund a 2-hour all-staff AI literacy training.'
+  };
+
+  const list = document.getElementById('next-steps-list');
+  list.innerHTML = '';
+  ranked.slice(0, 3).forEach(([d], i) => {
+    list.innerHTML += `<div class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${stepMap[d]}</div></div>`;
+  });
+  if (!ranked.length) {
+    list.innerHTML = '<div class="step-item"><div class="step-num">1</div><div class="step-text">Complete all five domain assessments to generate your personalized action plan.</div></div>';
+  }
+}
+
+function showDomain(domain) {
+  document.querySelectorAll('.domain-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.domain-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('domain-' + domain).classList.add('active');
+  const buttons = document.querySelectorAll('.domain-btn');
+  const order = ['data','sovereignty','vendor','community','workforce'];
+  buttons[order.indexOf(domain)].classList.add('active');
+}
+
+function showSection(s) {
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('assess-section').style.display = s==='assess' ? '' : 'none';
+  document.getElementById('report-section').style.display = s==='report' ? '' : 'none';
+  if (s === 'report') refreshBand();
+}
+
+// Build all questions on load
+Object.keys(questions).forEach(buildQuestions);
+</script>
+</body>
+</html>
